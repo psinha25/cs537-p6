@@ -48,6 +48,7 @@ static int find_victim()
 {
     int victim = -1;
     int curr;
+    char *ka; // Kernal address of the uva
     while (victim == -1)
     {
         curr = head;
@@ -62,7 +63,16 @@ static int find_victim()
         // Found our victim
         else
         {
-            // Encrypt victim page
+            // Get kernel address in this PTE
+            ka = (char *)P2V(PTE_ADDR(*pte));
+            // Do encryption if not already encrypted - should always encrypt
+            if (!(*pte & PTE_E))
+            {
+                for (int i = 0; i < PGSIZE; i++)
+                {
+                    *(ka + i) ^= 0xFF;
+                }
+            }
 
             // PTE bits are properly set(PTE_E = 1 and PTE_P = 0)
             *pte = *pte & ~PTE_P;
