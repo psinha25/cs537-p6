@@ -20,9 +20,11 @@ static int queue_findfree()
 
 static void send_to_end()
 {
+    // There aren't any entries in the queue
     if (head == -1)
         return;
 
+    // Only one entry in the queue
     if (head == tail)
         return;
 
@@ -38,7 +40,7 @@ static void send_to_end()
     queue[tail].next = old_head;
     queue[old_head].prev = tail;
 
-    // Update the tail to be the previous head (process we just scheduled)
+    // Update the tail to be the previous head
     tail = old_head;
 }
 
@@ -61,15 +63,15 @@ static int find_victim()
         else
         {
             // Encrypt victim page
-            for
-                // PTE bits are properly set (PTE_E = 1 and PTE_P = 0)
-                *pte = *pte & ~PTE_P;
+
+            // PTE bits are properly set(PTE_E = 1 and PTE_P = 0)
+            *pte = *pte & ~PTE_P;
             *pte = *pte | PTE_E;
 
-            // "Free the memory"
-            queue[curr].prev = -1;
-            queue[curr].next = -1;
-            queue[curr].pte = NULL;
+            // Move the head to current head's next
+            head = queue[curr].next;
+            // Set new head's previous
+            queue[head].prev = -1;
             victim = curr;
         }
     }
@@ -92,6 +94,8 @@ void queue_init()
 void queue_append(pte_t *pte)
 {
     int new_tail = queue_findfree();
+
+    // Number of decrypted is CLOCKSIZE, find victim
     if (new_tail == -1)
     {
         new_tail = find_vicim();

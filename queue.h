@@ -6,7 +6,6 @@
 void queue_int();
 void queue_append(pte_t *pte);
 void queue_remove();
-void queue_sendtoend();
 
 typedef struct entry
 {
