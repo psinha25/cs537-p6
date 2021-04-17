@@ -182,6 +182,7 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_p5tester\
+	_testgrow\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)

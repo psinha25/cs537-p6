@@ -170,7 +170,7 @@ growproc(int n)
       return -1;
     //// P6
     numnewpages = PGROUNDUP(n) / PGSIZE;
-    mencrypt(startsz, numnewpages);
+    mencrypt((char *)startsz, numnewpages);
     ////
   } else if(n < 0){
     if((sz = deallocuvm(curproc->pgdir, sz, sz + n)) == 0)
