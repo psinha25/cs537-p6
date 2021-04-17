@@ -159,17 +159,25 @@ int
 growproc(int n)
 {
   uint sz;
+  uint startsz; // P6
+  uint numnewpages; // P6
   struct proc *curproc = myproc();
 
   sz = curproc->sz;
+  startsz = sz;
   if(n > 0){
     if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
       return -1;
+    //// P6
+    numnewpages = PGROUNDUP(n) / PGSIZE;
+    mencrypt(startsz, numnewpages);
+    ////
   } else if(n < 0){
     if((sz = deallocuvm(curproc->pgdir, sz, sz + n)) == 0)
       return -1;
   }
   curproc->sz = sz;
+
 
   switchuvm(curproc);
   return 0;

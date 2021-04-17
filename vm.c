@@ -486,7 +486,7 @@ int mencrypt(char *virtual_addr, int len)
   return 0;
 }
 
-int getpgtable(struct pt_entry *entries, int num)
+int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
 {
   struct proc *me = myproc();
 
@@ -504,6 +504,9 @@ int getpgtable(struct pt_entry *entries, int num)
     //see deallocuvm
     if (curr_pte && *curr_pte)
     { //this page is allocated
+      if(wsetOnly && (*curr_pte & PTE_E)){
+        continue;
+      }
       //this is the same for all pt_entries... right?
       entries[index].pdx = PDX(i);
       entries[index].ptx = PTX(i);
@@ -513,6 +516,7 @@ int getpgtable(struct pt_entry *entries, int num)
       entries[index].present = (*curr_pte & PTE_P) ? 1 : 0;
       entries[index].writable = (*curr_pte & PTE_W) ? 1 : 0;
       entries[index].encrypted = (*curr_pte & PTE_E) ? 1 : 0;
+      entries[index].ref = (*curr_pte & PTE_A) ? 1 : 0;
       index++;
     }
 
