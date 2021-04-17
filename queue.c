@@ -1,60 +1,55 @@
 #include "queue.h"
 
-// Queue is an array holding entry structs
-entry queue[CLOCKSIZE];
-
-// Head and tail "pointer" in queue
-int head;
-int tail;
-
-static int queue_findfree()
+static int queue_findfree(clockqueue *queue)
 {
     int i;
-    for (int i = 0; i < CLOCKSIZE; i++)
+    for (i = 0; i < CLOCKSIZE; i++)
     {
-        if (queue[i].pte == NULL && queue[i].prev == -1 && queue[i].next == -1)
+        if (queue->buffer[i].pte == NULL &&
+            queue->buffer[i].va == NULL &&
+            queue->buffer[i].prev == -1 &&
+            queue->buffer[i].next == -1)
             return i;
     }
     return -1;
 }
 
-static void send_to_end()
+static void send_to_end(clockqueue *queue)
 {
     // There aren't any entries in the queue
-    if (head == -1)
+    if (queue->head == -1)
         return;
 
     // Only one entry in the queue
-    if (head == tail)
+    if (queue->head == queue->tail)
         return;
 
     // Temp variable for current head
-    int old_head = head;
+    int old_head = queue->head;
 
     // Move head up the queue
-    head = queue[head].next;
-    queue[head].prev = -1;
+    queue->head = queue->buffer[queue->head].next;
+    queue->buffer[queue->head].prev = -1;
 
     // Move the previous head to end of queue
-    queue[old_head].next = -1;
-    queue[tail].next = old_head;
-    queue[old_head].prev = tail;
+    queue->buffer[old_head].next = -1;
+    queue->buffer[queue->tail].next = old_head;
+    queue->buffer[old_head].prev = queue->tail;
 
     // Update the tail to be the previous head
-    tail = old_head;
+    queue->tail = old_head;
 }
 
-static int find_victim()
+static int find_victim(clockqueue *queue)
 {
     int victim = -1;
     int curr;
-    char *ka; // Kernal address of the uva
     while (victim == -1)
     {
-        curr = head;
-        pte_t *pte = queue[curr].pte;
+        curr = queue->head;
+        pte_t *pte = queue->buffer[curr].pte;
         // Haven't found our victim
-        if (*pte & PTE_A != 0)
+        if ((*pte & PTE_A) != 0)
         {
             // Flip PTE_A bit to 0
             *pte = *pte & ~PTE_A;
@@ -63,107 +58,101 @@ static int find_victim()
         // Found our victim
         else
         {
-            // Get kernel address in this PTE
-            ka = (char *)P2V(PTE_ADDR(*pte));
-            // Do encryption if not already encrypted - should always encrypt
-            if (!(*pte & PTE_E))
-            {
-                for (int i = 0; i < PGSIZE; i++)
-                {
-                    *(ka + i) ^= 0xFF;
-                }
-            }
-
-            // PTE bits are properly set(PTE_E = 1 and PTE_P = 0)
-            *pte = *pte & ~PTE_P;
-            *pte = *pte | PTE_E;
+            // Encrypt the victim page
+            mencrypt(queue->buffer[curr].va, 1);
 
             // Move the head to current head's next
-            head = queue[curr].next;
+            queue->head = queue->buffer[curr].next;
             // Set new head's previous
-            queue[head].prev = -1;
+            queue->buffer[queue->head].prev = -1;
             victim = curr;
         }
     }
     return victim;
 }
 
-void queue_init()
-{
-    int i;
-    for (int i = 0; i < CLOCKSIZE; i++)
-    {
-        queue[i].pte = NULL;
-        queue[i].prev = -1;
-        queue[i].next = -1;
-    }
-    head = -1;
-    tail = -1;
-}
-
-void queue_append(pte_t *pte)
-{
-    int new_tail = queue_findfree();
-
-    // Number of decrypted is CLOCKSIZE, find victim
-    if (new_tail == -1)
-    {
-        new_tail = find_vicim();
-    }
-
-    // Add to working set
-    queue[new_tail].pte = pte;
-    queue[new_tail].prev = tail;
-    queue[new_tail].next = -1;
-
-    // Only update the current tails next if tail isn't -1
-    if (tail != -1)
-        queue[tail].next = new_tail;
-
-    // Update tail
-    tail = new_tail;
-
-    // Edge case where we are pushing the first process
-    if (head == -1)
-    {
-        head = tail;
-    }
-}
-
-void queue_remove(pte_t *pte)
+void queue_init(clockqueue *queue)
 {
     int i;
     for (i = 0; i < CLOCKSIZE; i++)
     {
-        if (queue[i].pte == pte)
+        queue->buffer[i].pte = NULL;
+        queue->buffer[i].va = NULL;
+        queue->buffer[i].prev = -1;
+        queue->buffer[i].next = -1;
+    }
+    queue->head = -1;
+    queue->tail = -1;
+}
+
+void queue_append(clockqueue *queue, char *va, pte_t *pte)
+{
+    int new_tail = queue_findfree(queue);
+
+    // Number of decrypted is CLOCKSIZE, find victim
+    if (new_tail == -1)
+    {
+        new_tail = find_victim(queue);
+    }
+
+    // Add to working set
+    queue->buffer[new_tail].pte = pte;
+    queue->buffer[new_tail].va = va;
+    queue->buffer[new_tail].prev = queue->tail;
+    queue->buffer[new_tail].next = -1;
+
+    // Only update the current tails next if tail isn't -1
+    if (queue->tail != -1)
+        queue->buffer[queue->tail].next = new_tail;
+
+    // Update tail
+    queue->tail = new_tail;
+
+    // Edge case where we are pushing the first process
+    if (queue->head == -1)
+    {
+        queue->head = queue->tail;
+    }
+
+    // Decrypt the new page
+    mdecrypt(va);
+}
+
+void queue_remove(clockqueue *queue, pte_t *pte)
+{
+    int i;
+    for (i = 0; i < CLOCKSIZE; i++)
+    {
+        if (queue->buffer[i].pte == pte)
         {
             // Edge case: removing tail
-            if (tail == i)
+            if (queue->tail == i)
             {
-                tail = queue[i].prev;
+                queue->tail = queue->buffer[i].prev;
             }
             // Edge case: removing head
-            if (head == i)
+            if (queue->head == i)
             {
-                head = queue[i].next;
+                queue->head = queue->buffer[i].next;
             }
 
             // Update the prev and next "pointers" of the
             // neightboring entries if of the proc we are removing
             // if those entries exist
-            if (queue[i].prev != -1)
+            if (queue->buffer[i].prev != -1)
             {
-                queue[queue[i].prev].next = queue[i].next;
+                queue->buffer[queue->buffer[i].prev].next = queue->buffer[i].next;
             }
-            if (queue[i].next != -1)
+            if (queue->buffer[i].next != -1)
             {
-                queue[queue[i].next].prev = queue[i].prev;
+                queue->buffer[queue->buffer[i].next].prev = queue->buffer[i].prev;
             }
 
             // "Free" the memory in the queue
-            queue[i].pte = NULL;
-            queue[i].next = -1;
-            queue[i].prev = -1;
+            queue->buffer[i].pte = NULL;
+            queue->buffer[i].va = NULL;
+            queue->buffer[i].next = -1;
+            queue->buffer[i].prev = -1;
             break;
         }
     }
