@@ -1,4 +1,8 @@
-#include "queue.h"
+// #include "queue.h"
+#include "types.h"
+#include "defs.h"
+#include "param.h"
+#include "mmu.h"
 
 static int queue_findfree(clockqueue *queue)
 {
@@ -53,7 +57,7 @@ static int find_victim(clockqueue *queue)
         {
             // Flip PTE_A bit to 0
             *pte = *pte & ~PTE_A;
-            send_to_end();
+            send_to_end(queue);
         }
         // Found our victim
         else

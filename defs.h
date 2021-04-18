@@ -194,6 +194,26 @@ int dump_rawphymem(uint physical_addr, char *buffer);
 //TODO: mention this
 int mdecrypt(char *virtual_addr);
 
+// P6: queue.c
+void queue_int();
+void queue_append(entry *queue, char *va, pte_t *pte);
+void queue_remove();
+
+typedef struct entry
+{
+    int prev;
+    int next;
+    char *va;
+    pte_t *pte;
+} entry;
+
+typedef struct clockqueue
+{
+    entry buffer[CLOCKSIZE];
+    int head;
+    int tail;
+} clockqueue;
+
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x) / sizeof((x)[0]))
 
