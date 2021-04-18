@@ -1,4 +1,5 @@
 #include "ptentry.h"
+#include "mmu.h"
 
 struct buf;
 struct context;
