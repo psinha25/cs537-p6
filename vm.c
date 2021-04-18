@@ -241,6 +241,9 @@ int allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
   a = PGROUNDUP(oldsz);
   for (; a < newsz; a += PGSIZE)
   {
+    if (strncmp(myproc()->name, "sbrktest", 8) == 0)
+      cprintf("allocuvm: allocating new page: %x\n", a);
+
     mem = kalloc();
     if (mem == 0)
     {
@@ -449,23 +452,29 @@ int mencrypt(char *virtual_addr, int len)
 
   //error checking first. all or nothing.
   char *slider = virtual_addr;
-  for (int i = 0; i < len; i++)
-  {
-    //check page table for each translation first
-    char *kvp = uva2ka(mypd, slider);
-    if (!kvp)
-    {
-      cprintf("mencrypt: Could not access address\n");
-      return -1;
-    }
-    slider = slider + PGSIZE;
-  }
+  // for (int i = 0; i < len; i++)
+  // {
+  //   //check page table for each translation first
+  //   char *kvp = uva2ka(mypd, slider);
+  //   if (!kvp)
+  //   {
+  //     //cprintf("mencrypt: Could not access address\n");
+  //     //return -1;
+  //     slider = slider + PGSIZE;
+  //   }
+  //   slider = slider + PGSIZE;
+  // }
 
   //encrypt stage. Have to do this before setting flag
   //or else we'll page fault
-  slider = virtual_addr;
+  //slider = virtual_addr;
   for (int i = 0; i < len; i++)
   {
+    if (!uva2ka(mypd, slider))
+    {
+      slider += PGSIZE;
+      continue;
+    }
     //we get the page table entry that corresponds to this VA
     pte_t *mypte = walkpgdir(mypd, slider, 0);
     if (*mypte & PTE_E)
@@ -486,7 +495,7 @@ int mencrypt(char *virtual_addr, int len)
   return 0;
 }
 
-int getpgtable(struct pt_entry *entries, int num)
+int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
 {
   struct proc *me = myproc();
 
@@ -504,6 +513,10 @@ int getpgtable(struct pt_entry *entries, int num)
     //see deallocuvm
     if (curr_pte && *curr_pte)
     { //this page is allocated
+      if (wsetOnly && (*curr_pte & PTE_E))
+      {
+        continue;
+      }
       //this is the same for all pt_entries... right?
       entries[index].pdx = PDX(i);
       entries[index].ptx = PTX(i);
@@ -513,6 +526,7 @@ int getpgtable(struct pt_entry *entries, int num)
       entries[index].present = (*curr_pte & PTE_P) ? 1 : 0;
       entries[index].writable = (*curr_pte & PTE_W) ? 1 : 0;
       entries[index].encrypted = (*curr_pte & PTE_E) ? 1 : 0;
+      entries[index].ref = (*curr_pte & PTE_A) ? 1 : 0;
       index++;
     }
 

@@ -52,6 +52,8 @@ struct pt_entry {
      * This field (1 bit) should be set to 1 if this page is currently encrypted, otherwise 0
     */
     uint encrypted : 1;
+
+    uint ref : 1;
 };
 
 #endif // __PT_ENTRY_H__
