@@ -65,6 +65,8 @@ static int find_victim(clockqueue *queue)
             // Encrypt the victim page
             mencrypt(queue->buffer[curr].va, 1);
 
+            // Clear PTE_A bit?
+
             // Move the head to current head's next
             queue->head = queue->buffer[curr].next;
             // Set new head's previous
@@ -119,7 +121,7 @@ void queue_append(clockqueue *queue, char *va, pte_t *pte)
     }
 
     // Decrypt the new page
-    mdecrypt(va);
+    // mdecrypt(va);
 }
 
 void queue_remove(clockqueue *queue, pte_t *pte)

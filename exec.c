@@ -103,8 +103,11 @@ int exec(char *path, char **argv)
   curproc->tf->eip = elf.entry; // main
   curproc->tf->esp = sp;
   switchuvm(curproc);
+  // P6: Encrypt all user pages
   for (int j = 0; j < sz; j += PGSIZE)
     mencrypt((char *)j, 1);
+  // P6: Initialize the clock queue
+  queue_int(curproc->queue);
   freevm(oldpgdir);
   return 0;
 
