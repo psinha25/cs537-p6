@@ -3,7 +3,7 @@
 #include "param.h"
 #include "mmu.h"
 
-void queue_int(clockqueue *queue);
+void queue_init(clockqueue *queue);
 void queue_append(clockqueue *queue, char *va, pte_t *pte);
 void queue_remove(clockqueue *queue, pte_t *pte);
 

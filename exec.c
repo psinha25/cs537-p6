@@ -107,7 +107,7 @@ int exec(char *path, char **argv)
   for (int j = 0; j < sz; j += PGSIZE)
     mencrypt((char *)j, 1);
   // P6: Initialize the clock queue
-  queue_int(curproc->queue);
+  queue_init(curproc->queue);
   freevm(oldpgdir);
   return 0;
 

@@ -210,7 +210,7 @@ typedef struct clockqueue
 } clockqueue;
 
 // P6: queue.c
-void queue_int(clockqueue *queue);
+void queue_init(clockqueue *queue);
 void queue_append(clockqueue *queue, char *va, pte_t *pte);
 void queue_remove(clockqueue *queue, pte_t *pte);
 
