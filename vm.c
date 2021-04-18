@@ -469,12 +469,6 @@ int mencrypt(char *virtual_addr, int len)
   slider = virtual_addr;
   for (int i = 0; i < len; i++)
   {
-    // if (!uva2ka(mypd, slider))
-    // {
-    //   cprintf("Ended up here\n");
-    //   slider += PGSIZE;
-    //   continue;
-    // }
     //we get the page table entry that corresponds to this VA
     pte_t *mypte = walkpgdir(mypd, slider, 0);
     if (*mypte & PTE_E)
