@@ -184,9 +184,6 @@ int growproc(int n)
       return -1;
   }
 
-  if (strncmp(curproc->name, "sbrktest", 8) == 0)
-    cprintf("old sz: %x, new sz: %x\n", curproc->sz, sz);
-
   curproc->sz = sz;
 
   switchuvm(curproc);

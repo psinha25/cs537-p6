@@ -241,9 +241,6 @@ int allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
   a = PGROUNDUP(oldsz);
   for (; a < newsz; a += PGSIZE)
   {
-    if (strncmp(myproc()->name, "sbrktest", 8) == 0)
-      cprintf("allocuvm: allocating new page: %x\n", a);
-
     mem = kalloc();
     if (mem == 0)
     {
