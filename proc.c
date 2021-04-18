@@ -115,6 +115,9 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  // Initialize the queue
+  queue_init(&(p->queue));
+
   return p;
 }
 

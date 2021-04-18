@@ -44,6 +44,21 @@ enum procstate
   ZOMBIE
 };
 
+struct entry
+{
+  int prev;
+  int next;
+  char *va;
+  pte_t *pte;
+};
+
+struct clockqueue
+{
+  struct entry buffer[8];
+  int head;
+  int tail;
+};
+
 // Per-process state
 struct proc
 {
@@ -60,7 +75,7 @@ struct proc
   struct file *ofile[NOFILE]; // Open files
   struct inode *cwd;          // Current directory
   char name[16];              // Process name (debugging)
-  struct clockqueue *queue;   // Process's working set
+  struct clockqueue queue;    // Process's working set
 };
 
 // Process memory is laid out contiguously, low addresses first:

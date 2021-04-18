@@ -11,6 +11,9 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+// P6
+struct entry;
+struct clockqueue;
 
 // bio.c
 void binit(void);
@@ -194,25 +197,10 @@ int dump_rawphymem(uint physical_addr, char *buffer);
 //TODO: mention this
 int mdecrypt(char *virtual_addr);
 
-typedef struct entry
-{
-    int prev;
-    int next;
-    char *va;
-    pte_t *pte;
-} entry;
-
-typedef struct clockqueue
-{
-    entry buffer[8];
-    int head;
-    int tail;
-} clockqueue;
-
 // P6: queue.c
-void queue_int(clockqueue *queue);
-void queue_append(clockqueue *queue, char *va, pte_t *pte);
-void queue_remove(clockqueue *queue, pte_t *pte);
+void queue_init(struct clockqueue *queue);
+void queue_append(struct clockqueue *queue, char *va, pte_t *pte);
+void queue_remove(struct clockqueue *queue, pte_t *pte);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x) / sizeof((x)[0]))
