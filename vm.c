@@ -525,6 +525,7 @@ int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
       //have to set it like this because these are 1 bit wide fields
       entries[index].present = (*curr_pte & PTE_P) ? 1 : 0;
       entries[index].writable = (*curr_pte & PTE_W) ? 1 : 0;
+      entries[index].user = (*curr_pte & PTE_U) ? 1 : 0;
       entries[index].encrypted = (*curr_pte & PTE_E) ? 1 : 0;
       entries[index].ref = (*curr_pte & PTE_A) ? 1 : 0;
       index++;
