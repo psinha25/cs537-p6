@@ -44,6 +44,21 @@ enum procstate
   ZOMBIE
 };
 
+struct entry
+{
+  int prev;
+  int next;
+  char *va;
+  pte_t *pte;
+};
+
+struct clockqueue
+{
+  struct entry buffer[8];
+  int head;
+  int tail;
+};
+
 // Per-process state
 struct proc
 {

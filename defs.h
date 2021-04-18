@@ -194,21 +194,6 @@ int dump_rawphymem(uint physical_addr, char *buffer);
 //TODO: mention this
 int mdecrypt(char *virtual_addr);
 
-struct entry
-{
-    int prev;
-    int next;
-    char *va;
-    pte_t *pte;
-};
-
-struct clockqueue
-{
-    struct entry buffer[8];
-    int head;
-    int tail;
-};
-
 // P6: queue.c
 void queue_init(struct clockqueue *queue);
 void queue_append(struct clockqueue *queue, char *va, pte_t *pte);

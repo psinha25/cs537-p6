@@ -1,6 +1,7 @@
 // #include "queue.h"
 #include "types.h"
 #include "defs.h"
+#include "proc.h"
 #include "param.h"
 #include "mmu.h"
 
