@@ -466,7 +466,7 @@ int mencrypt(char *virtual_addr, int len)
 
   //encrypt stage. Have to do this before setting flag
   //or else we'll page fault
-  //slider = virtual_addr;
+  slider = virtual_addr;
   for (int i = 0; i < len; i++)
   {
     // if (!uva2ka(mypd, slider))
