@@ -4,7 +4,7 @@
 #include "param.h"
 #include "mmu.h"
 
-static int queue_findfree(clockqueue *queue)
+static int queue_findfree(struct clockqueue *queue)
 {
     int i;
     for (i = 0; i < CLOCKSIZE; i++)
@@ -18,7 +18,7 @@ static int queue_findfree(clockqueue *queue)
     return -1;
 }
 
-static void send_to_end(clockqueue *queue)
+static void send_to_end(struct clockqueue *queue)
 {
     // There aren't any entries in the queue
     if (queue->head == -1)
@@ -44,7 +44,7 @@ static void send_to_end(clockqueue *queue)
     queue->tail = old_head;
 }
 
-static int find_victim(clockqueue *queue)
+static int find_victim(struct clockqueue *queue)
 {
     int victim = -1;
     int curr;
@@ -78,7 +78,7 @@ static int find_victim(clockqueue *queue)
     return victim;
 }
 
-void queue_init(clockqueue *queue)
+void queue_init(struct clockqueue *queue)
 {
     int i;
     for (i = 0; i < CLOCKSIZE; i++)
@@ -92,7 +92,7 @@ void queue_init(clockqueue *queue)
     queue->tail = -1;
 }
 
-void queue_append(clockqueue *queue, char *va, pte_t *pte)
+void queue_append(struct clockqueue *queue, char *va, pte_t *pte)
 {
     int new_tail = queue_findfree(queue);
 
@@ -125,7 +125,7 @@ void queue_append(clockqueue *queue, char *va, pte_t *pte)
     // mdecrypt(va);
 }
 
-void queue_remove(clockqueue *queue, pte_t *pte)
+void queue_remove(struct clockqueue *queue, pte_t *pte)
 {
     int i;
     for (i = 0; i < CLOCKSIZE; i++)
