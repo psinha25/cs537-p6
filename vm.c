@@ -521,6 +521,10 @@ int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
           }
           curr = me->queue.buffer[curr].next;
         }
+        if (i == 0)
+        {
+          break;
+        }
         continue;
       }
       //this is the same for all pt_entries... right?
