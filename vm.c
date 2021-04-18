@@ -512,33 +512,64 @@ int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
     { //this page is allocated
       if (wsetOnly)
       {
+        // int curr = me->queue.head;
+        // while (curr != -1)
+        // {
+        //   if (me->queue.buffer[curr].pte == curr_pte)
+        //   {
+        //     break;
+        //   }
+        //   curr = me->queue.buffer[curr].next;
+        // }
+        // if (i == 0)
+        // {
+        //   break;
+        // }
+        // continue;
         int curr = me->queue.head;
+        printf(1, "The head of this process is: %d\n", curr);
         while (curr != -1)
         {
+          printf(1, "The buffer values at %d are: prev: %d, next: %d, va: %x, pte: %x\n",
+                 curr,
+                 me->queue.buffer[curr].prev,
+                 me->queue.buffer[curr].next,
+                 me->queue.buffer[curr].va,
+                 me->queue.buffer[curr].pte);
           if (me->queue.buffer[curr].pte == curr_pte)
           {
+            //this is the same for all pt_entries... right?
+            entries[index].pdx = PDX(i);
+            entries[index].ptx = PTX(i);
+            //convert to physical addr then shift to get PPN
+            entries[index].ppage = PPN(*curr_pte);
+            //have to set it like this because these are 1 bit wide fields
+            entries[index].present = (*curr_pte & PTE_P) ? 1 : 0;
+            entries[index].writable = (*curr_pte & PTE_W) ? 1 : 0;
+            entries[index].user = (*curr_pte & PTE_U) ? 1 : 0;
+            entries[index].encrypted = (*curr_pte & PTE_E) ? 1 : 0;
+            entries[index].ref = (*curr_pte & PTE_A) ? 1 : 0;
+            index++;
             break;
           }
           curr = me->queue.buffer[curr].next;
         }
-        if (i == 0)
-        {
-          break;
-        }
-        continue;
       }
-      //this is the same for all pt_entries... right?
-      entries[index].pdx = PDX(i);
-      entries[index].ptx = PTX(i);
-      //convert to physical addr then shift to get PPN
-      entries[index].ppage = PPN(*curr_pte);
-      //have to set it like this because these are 1 bit wide fields
-      entries[index].present = (*curr_pte & PTE_P) ? 1 : 0;
-      entries[index].writable = (*curr_pte & PTE_W) ? 1 : 0;
-      entries[index].user = (*curr_pte & PTE_U) ? 1 : 0;
-      entries[index].encrypted = (*curr_pte & PTE_E) ? 1 : 0;
-      entries[index].ref = (*curr_pte & PTE_A) ? 1 : 0;
-      index++;
+      else
+      {
+        //this is the same for all pt_entries... right?
+        entries[index].pdx = PDX(i);
+        entries[index].ptx = PTX(i);
+        //convert to physical addr then shift to get PPN
+        entries[index].ppage = PPN(*curr_pte);
+        //have to set it like this because these are 1 bit wide fields
+        entries[index].present = (*curr_pte & PTE_P) ? 1 : 0;
+        entries[index].writable = (*curr_pte & PTE_W) ? 1 : 0;
+        entries[index].user = (*curr_pte & PTE_U) ? 1 : 0;
+        entries[index].encrypted = (*curr_pte & PTE_E) ? 1 : 0;
+        entries[index].ref = (*curr_pte & PTE_A) ? 1 : 0;
+        index++;
+      }
     }
 
     if (i == 0)
