@@ -9,7 +9,7 @@ static int queue_findfree(clockqueue *queue)
     int i;
     for (i = 0; i < CLOCKSIZE; i++)
     {
-        if (queue->buffer[i].pte == NULL &&
+        if (queue->buffer[i].pte == (uint *)NULL &&
             queue->buffer[i].va == NULL &&
             queue->buffer[i].prev == -1 &&
             queue->buffer[i].next == -1)
@@ -80,7 +80,7 @@ void queue_init(clockqueue *queue)
     int i;
     for (i = 0; i < CLOCKSIZE; i++)
     {
-        queue->buffer[i].pte = NULL;
+        queue->buffer[i].pte = (uint *)NULL;
         queue->buffer[i].va = NULL;
         queue->buffer[i].prev = -1;
         queue->buffer[i].next = -1;
@@ -153,7 +153,7 @@ void queue_remove(clockqueue *queue, pte_t *pte)
             }
 
             // "Free" the memory in the queue
-            queue->buffer[i].pte = NULL;
+            queue->buffer[i].pte = (uint *)NULL;
             queue->buffer[i].va = NULL;
             queue->buffer[i].next = -1;
             queue->buffer[i].prev = -1;
