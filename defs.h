@@ -200,14 +200,14 @@ struct entry
     int next;
     char *va;
     pte_t *pte;
-} entry;
+};
 
 struct clockqueue
 {
     struct entry buffer[8];
     int head;
     int tail;
-} clockqueue;
+};
 
 // P6: queue.c
 void queue_init(struct clockqueue *queue);
