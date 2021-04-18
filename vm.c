@@ -510,8 +510,17 @@ int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
     //see deallocuvm
     if (curr_pte && *curr_pte)
     { //this page is allocated
-      if (wsetOnly && ((*curr_pte & PTE_E) || !(*curr_pte & PTE_U)))
+      if (wsetOnly)
       {
+        int curr = me->queue.head;
+        while (curr != -1)
+        {
+          if (me->queue.buffer[curr].pte == curr_pte)
+          {
+            break;
+          }
+          curr = me->queue.buffer[curr].next;
+        }
         continue;
       }
       //this is the same for all pt_entries... right?
