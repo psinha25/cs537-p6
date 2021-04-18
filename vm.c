@@ -452,30 +452,29 @@ int mencrypt(char *virtual_addr, int len)
 
   //error checking first. all or nothing.
   char *slider = virtual_addr;
-  // for (int i = 0; i < len; i++)
-  // {
-  //   //check page table for each translation first
-  //   char *kvp = uva2ka(mypd, slider);
-  //   if (!kvp)
-  //   {
-  //     //cprintf("mencrypt: Could not access address\n");
-  //     //return -1;
-  //     slider = slider + PGSIZE;
-  //   }
-  //   slider = slider + PGSIZE;
-  // }
+  for (int i = 0; i < len; i++)
+  {
+    //check page table for each translation first
+    char *kvp = uva2ka(mypd, slider);
+    if (!kvp)
+    {
+      cprintf("mencrypt: Could not access address\n");
+      return -1;
+    }
+    slider = slider + PGSIZE;
+  }
 
   //encrypt stage. Have to do this before setting flag
   //or else we'll page fault
   //slider = virtual_addr;
   for (int i = 0; i < len; i++)
   {
-    if (!uva2ka(mypd, slider))
-    {
-      cprintf("Ended up here\n");
-      slider += PGSIZE;
-      continue;
-    }
+    // if (!uva2ka(mypd, slider))
+    // {
+    //   cprintf("Ended up here\n");
+    //   slider += PGSIZE;
+    //   continue;
+    // }
     //we get the page table entry that corresponds to this VA
     pte_t *mypte = walkpgdir(mypd, slider, 0);
     if (*mypte & PTE_E)
