@@ -116,8 +116,18 @@ found:
   p->context->eip = (uint)forkret;
 
   // Initialize the queue
-  queue_init(&(p->queue));
+  // queue_init(&(p->queue));
 
+  int i;
+  for (i = 0; i < CLOCKSIZE; i++)
+  {
+    p->queue->buffer[i].pte = (uint *)NULL;
+    p->queue->buffer[i].va = NULL;
+    p->queue->buffer[i].prev = -1;
+    p->queue->buffer[i].next = -1;
+  }
+  queue->head = -1;
+  queue->tail = -1;
   return p;
 }
 
