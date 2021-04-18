@@ -241,6 +241,9 @@ int allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
   a = PGROUNDUP(oldsz);
   for (; a < newsz; a += PGSIZE)
   {
+    if (strncmp(myproc()->name, "sbrktest", 8) == 0)
+      cprintf("allocuvm: allocating new page: %x\n", a);
+
     mem = kalloc();
     if (mem == 0)
     {
@@ -467,7 +470,8 @@ int mencrypt(char *virtual_addr, int len)
   //slider = virtual_addr;
   for (int i = 0; i < len; i++)
   {
-    if(!uva2ka(mypd, slider)){
+    if (!uva2ka(mypd, slider))
+    {
       slider += PGSIZE;
       continue;
     }
@@ -509,7 +513,8 @@ int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
     //see deallocuvm
     if (curr_pte && *curr_pte)
     { //this page is allocated
-      if(wsetOnly && (*curr_pte & PTE_E)){
+      if (wsetOnly && (*curr_pte & PTE_E))
+      {
         continue;
       }
       //this is the same for all pt_entries... right?
