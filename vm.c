@@ -527,15 +527,15 @@ int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
         // }
         // continue;
         int curr = me->queue.head;
-        printf(1, "The head of this process is: %d\n", curr);
+        cprintf("The head of this process is: %d\n", curr);
         while (curr != -1)
         {
-          printf(1, "The buffer values at %d are: prev: %d, next: %d, va: %x, pte: %x\n",
-                 curr,
-                 me->queue.buffer[curr].prev,
-                 me->queue.buffer[curr].next,
-                 me->queue.buffer[curr].va,
-                 me->queue.buffer[curr].pte);
+          cprintf("The buffer values at %d are: prev: %d, next: %d, va: %x, pte: %x\n",
+                  curr,
+                  me->queue.buffer[curr].prev,
+                  me->queue.buffer[curr].next,
+                  me->queue.buffer[curr].va,
+                  me->queue.buffer[curr].pte);
           if (me->queue.buffer[curr].pte == curr_pte)
           {
             //this is the same for all pt_entries... right?
