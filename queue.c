@@ -1,9 +1,8 @@
-// #include "queue.h"
-#include "types.h"
-#include "defs.h"
-#include "proc.h"
-#include "param.h"
-#include "mmu.h"
+#include "queue.h"
+// #include "types.h"
+// #include "defs.h"
+// #include "param.h"
+// #include "mmu.h"
 
 static int queue_findfree(struct clockqueue *queue)
 {
