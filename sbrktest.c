@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
 {
     int num_entries = 15;
     struct pt_entry *entries = malloc(sizeof(struct pt_entry) * num_entries);
-    getpgtable(entries, num_entries, 0);
-    for (int i = 0; i < num_entries; ++i)
+    int returned = getpgtable(entries, num_entries, 0);
+    for (int i = 0; i < returned; ++i)
     {
         printf(1, "%d: pdx: %x, ptx: %x, ppage: %x, present: %d, writable: %d, user: %d, encrypted: %d, ref: %d\n",
                i, entries[i].pdx,
