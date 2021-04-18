@@ -165,14 +165,14 @@ int growproc(int n)
   struct proc *curproc = myproc();
 
   sz = curproc->sz;
-  startsz = sz;
+  startsz = PGROUNDUP(sz);
   if (n > 0)
   {
     if ((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
       return -1;
     //// P6
     numnewpages = PGROUNDUP(n) / PGSIZE;
-    mencrypt((char *)startsz, numnewpages + 1);
+    mencrypt((char *)startsz, numnewpages);
     ////
   }
   else if (n < 0)
