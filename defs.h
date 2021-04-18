@@ -12,6 +12,7 @@ struct sleeplock;
 struct stat;
 struct superblock;
 // P6
+struct entry;
 struct clockqueue;
 
 // bio.c
