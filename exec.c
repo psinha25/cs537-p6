@@ -102,6 +102,7 @@ exec(char *path, char **argv)
   curproc->tf->esp = sp;
   switchuvm(curproc);
   freevm(oldpgdir);
+ // mencrypt(0, (sz / PGSIZE)); // P6
   return 0;
 
  bad:
