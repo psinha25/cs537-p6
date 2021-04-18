@@ -28,20 +28,20 @@ int main(int argc, char *argv[])
                entries[i].encrypted, entries[i].ref);
     }
 
-    // printf(1, "\nsbrk(PGSIZE)\n");
-    // sbrk(PGSIZE);
+    printf(1, "\nsbrk(PGSIZE)\n");
+    sbrk(PGSIZE);
 
     printf(1, "\nsbrk(PGSIZE / 2)\n");
     sbrk(PGSIZE / 2);
 
-    // printf(1, "\nsbrk(PGSIZE)\n");
-    // sbrk(PGSIZE);
+    printf(1, "\nsbrk(PGSIZE)\n");
+    sbrk(PGSIZE);
 
-    // printf(1, "\nsbrk(1)\n");
-    // sbrk(1);
+    printf(1, "\nsbrk(1)\n");
+    sbrk(1);
 
-    // printf(1, "\nsbrk((PGSIZE / 2) - 1)\n");
-    // sbrk((PGSIZE / 2) - 1);
+    printf(1, "\nsbrk((PGSIZE / 2) - 1)\n");
+    sbrk((PGSIZE / 2) - 1);
 
     getpgtable(entries, num_entries, 0);
     for (int i = 0; i < num_entries; ++i)
