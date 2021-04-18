@@ -65,7 +65,8 @@ static int find_victim(clockqueue *queue)
             // Encrypt the victim page
             mencrypt(queue->buffer[curr].va, 1);
 
-            // Clear PTE_A bit?
+            // Apparently need to clear to pass more tests
+            *pte = *pte & ~PTE_A;
 
             // Move the head to current head's next
             queue->head = queue->buffer[curr].next;
