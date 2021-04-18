@@ -428,7 +428,7 @@ int mdecrypt(char *virtual_addr)
   }
 
   // Insert this page into working set
-  // queue_append(p->queue, virtual_addr, pte);
+  queue_append(&(p->queue), virtual_addr, pte);
 
   *pte = *pte & ~PTE_E;
   *pte = *pte | PTE_P;
