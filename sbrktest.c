@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     struct pt_entry *entries2 = malloc(sizeof(struct pt_entry) * num_entries);
 
-    int num_returned = getpgtable(entries2, num_entries, 0);
+    int num_returned = getpgtable(entries2, num_entries, 1);
     for (int i = 0; i < num_returned; ++i)
     {
         printf(1, "%d: pdx: %x, ptx: %x, ppage: %x, present: %d, writable: %d, user: %d, encrypted: %d, ref: %d\n",
