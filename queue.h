@@ -1,7 +1,7 @@
 #include "types.h"
-#include "defs.h"
-#include "param.h"
 #include "mmu.h"
+#include "param.h"
+#include "defs.h"
 
 // void queue_init(clockqueue *queue);
 // void queue_append(clockqueue *queue, char *va, pte_t *pte);
