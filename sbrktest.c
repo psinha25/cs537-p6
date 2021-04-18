@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 
     printf(1, "\nsbrk(PGSIZE)\n");
     sbrk(PGSIZE);
+
     getpgtable(entries, num_entries, 0);
     for (int i = 0; i < num_entries; ++i)
     {
