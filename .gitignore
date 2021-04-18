@@ -13,3 +13,4 @@ kernel
 mkfs
 _*
 .gdbinit
+.DS_Store
