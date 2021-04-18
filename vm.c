@@ -472,7 +472,7 @@ int mencrypt(char *virtual_addr, int len)
   {
     if (!uva2ka(mypd, slider))
     {
-      cprintf("Ended up here");
+      cprintf("Ended up here\n");
       slider += PGSIZE;
       continue;
     }

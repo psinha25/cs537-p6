@@ -172,7 +172,7 @@ int growproc(int n)
       return -1;
     //// P6
     numnewpages = PGROUNDUP(n) / PGSIZE;
-    mencrypt((char *)startsz, numnewpages);
+    mencrypt((char *)startsz, numnewpages + 1);
     ////
   }
   else if (n < 0)
