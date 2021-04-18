@@ -11,6 +11,8 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+// P6
+struct clockqueue;
 
 // bio.c
 void binit(void);
