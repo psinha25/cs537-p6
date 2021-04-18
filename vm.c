@@ -507,7 +507,7 @@ int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
     //see deallocuvm
     if (curr_pte && *curr_pte)
     { //this page is allocated
-      if (wsetOnly && (*curr_pte & PTE_E))
+      if (wsetOnly && ((*curr_pte & PTE_E) || !(*curr_pte & PTE_U)))
       {
         continue;
       }
