@@ -103,6 +103,8 @@ int exec(char *path, char **argv)
   curproc->tf->eip = elf.entry; // main
   curproc->tf->esp = sp;
   switchuvm(curproc);
+  for (int j = 0; j < sz; j += PGSIZE)
+    mencrypt((char *)j, 1);
   freevm(oldpgdir);
   return 0;
 

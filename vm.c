@@ -452,29 +452,23 @@ int mencrypt(char *virtual_addr, int len)
 
   //error checking first. all or nothing.
   char *slider = virtual_addr;
-  // for (int i = 0; i < len; i++)
-  // {
-  //   //check page table for each translation first
-  //   char *kvp = uva2ka(mypd, slider);
-  //   if (!kvp)
-  //   {
-  //     //cprintf("mencrypt: Could not access address\n");
-  //     //return -1;
-  //     slider = slider + PGSIZE;
-  //   }
-  //   slider = slider + PGSIZE;
-  // }
+  for (int i = 0; i < len; i++)
+  {
+    //check page table for each translation first
+    char *kvp = uva2ka(mypd, slider);
+    if (!kvp)
+    {
+      cprintf("mencrypt: Could not access address\n");
+      return -1;
+    }
+    slider = slider + PGSIZE;
+  }
 
   //encrypt stage. Have to do this before setting flag
   //or else we'll page fault
-  //slider = virtual_addr;
+  slider = virtual_addr;
   for (int i = 0; i < len; i++)
   {
-    if (!uva2ka(mypd, slider))
-    {
-      slider += PGSIZE;
-      continue;
-    }
     //we get the page table entry that corresponds to this VA
     pte_t *mypte = walkpgdir(mypd, slider, 0);
     if (*mypte & PTE_E)
@@ -525,6 +519,7 @@ int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
       //have to set it like this because these are 1 bit wide fields
       entries[index].present = (*curr_pte & PTE_P) ? 1 : 0;
       entries[index].writable = (*curr_pte & PTE_W) ? 1 : 0;
+      entries[index].user = (*curr_pte & PTE_U) ? 1 : 0;
       entries[index].encrypted = (*curr_pte & PTE_E) ? 1 : 0;
       entries[index].ref = (*curr_pte & PTE_A) ? 1 : 0;
       index++;

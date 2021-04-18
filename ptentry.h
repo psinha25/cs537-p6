@@ -2,8 +2,6 @@
 #define PT_ENTRY_H
 #include "types.h"
 
-
-
 /**
  * This structure refers to the state of a virtual page.
  * 
@@ -22,7 +20,8 @@
  * |             Number              |                     |
  * +----------------+----------------+---------------------+
 **/
-struct pt_entry {
+struct pt_entry
+{
     /**
      * Page directory index (10 bits) of this virtual page
     */
@@ -31,12 +30,12 @@ struct pt_entry {
     /**
      * Page Table index (10 bits) of this virtual page
     */
-    uint ptx : 10; 
+    uint ptx : 10;
 
     /**
      * Physical Page Number (20 bits) allocated to this virutal page
     */
-    uint ppage : 20; 
+    uint ppage : 20;
 
     /**
      * This field (1 bit) should be set to 1 if PTE_P == 1, otherwise 0
@@ -47,6 +46,8 @@ struct pt_entry {
      * This field (1 bit) should be set to 1 if PTE_W == 1, otherwise 0
     */
     uint writable : 1;
+
+    uint user : 1;
 
     /**
      * This field (1 bit) should be set to 1 if this page is currently encrypted, otherwise 0

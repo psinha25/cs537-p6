@@ -165,7 +165,7 @@ int growproc(int n)
   struct proc *curproc = myproc();
 
   sz = curproc->sz;
-  startsz = sz;
+  startsz = PGROUNDUP(sz);
   if (n > 0)
   {
     if ((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
