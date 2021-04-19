@@ -16,4 +16,6 @@ int main(int argc, char *argv[])
     ptr[0] = ptr[0];
     // The page should now be decrypted and put into the clock queue
     getpgtable(pt_entry, 1, 1);
+    exit();
+    return 0;
 }
