@@ -63,12 +63,13 @@ static int find_victim(struct clockqueue *queue)
         // Found our victim
         else
         {
+            crpintf("\nBefore mencrypt R:%d\n", (*pte & PTE_A) ? 1 : 0);
             // Encrypt the victim page
             mencrypt(queue->buffer[curr].va, 1);
-
+            crpintf("After mencrypt R:%d\n", (*pte & PTE_A) ? 1 : 0);
             // Apparently need to clear to pass more tests
             *pte = *pte & ~PTE_A;
-
+            crpintf("After my set R:%d\n", (*pte & PTE_A) ? 1 : 0);
             // Move the head to current head's next
             queue->head = queue->buffer[curr].next;
             // Set new head's previous
