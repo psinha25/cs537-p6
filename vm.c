@@ -424,9 +424,6 @@ int mdecrypt(char *virtual_addr)
     return -1;
   }
 
-  // Insert this page into working set
-  queue_append(&(p->queue), virtual_addr, pte);
-
   *pte = *pte & ~PTE_E;
   *pte = *pte | PTE_P;
 
@@ -439,6 +436,17 @@ int mdecrypt(char *virtual_addr)
     slider++;
   }
 
+  // Insert this page into working set
+  queue_append(&(p->queue), virtual_addr, pte);
+
+  // Print the queue started at the
+  cprintf("working set queue:\n");
+  int curr = p->queue.head;
+  while (curr != -1)
+  {
+    cprintf("%x", p->queue.buffer[curr].va);
+    curr = p->queue.buffer[curr].next;
+  }
   return 0;
 }
 
