@@ -446,8 +446,8 @@ int mdecrypt(char *virtual_addr)
   {
     pte_t *pte = p->queue.buffer[curr].pte;
 
-    cprintf("VA:%x\tPTE:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
-            p->queue.buffer[curr].va, p->queue.buffer[curr].pte,
+    cprintf("VA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
+            p->queue.buffer[curr].va, PPN(*(p->queue.buffer[curr].pte)),
             *pte & PTE_U ? 1 : 0, *pte & PTE_A ? 1 : 0,
             *pte & PTE_E ? 1 : 0, *pte & PTE_P ? 1 : 0);
     curr = p->queue.buffer[curr].next;
