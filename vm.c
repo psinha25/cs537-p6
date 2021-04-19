@@ -444,7 +444,12 @@ int mdecrypt(char *virtual_addr)
   int curr = p->queue.head;
   while (curr != -1)
   {
-    cprintf("%x\t", p->queue.buffer[curr].va);
+    pte_t *pte = p->queue.buffer[curr].pte;
+
+    cprintf("VA:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
+            p->queue.buffer[curr].va,
+            *pte & PTE_U, *pte & PTE_A,
+            *pte & PTE_E, *pte & PTE_P);
     curr = p->queue.buffer[curr].next;
   }
   cprintf("\n");
