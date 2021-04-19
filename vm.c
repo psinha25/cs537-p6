@@ -566,7 +566,7 @@ int dump_rawphymem(uint physical_addr, char *buffer)
 {
   //note that copyout converts buffer to a kva and then copies
   //which means that if buffer is encrypted, it won't trigger a decryption request
-  pte_t *pte = walkpgdir(myproc()->pgdir, (void *)P2V(physical_addr), 0);
+  // pte_t *pte = walkpgdir(myproc()->pgdir, (void *)P2V(physical_addr), 0);
   *buffer = *buffer;
   int retval = copyout(myproc()->pgdir, (uint)buffer, (void *)P2V(physical_addr), PGSIZE);
 
