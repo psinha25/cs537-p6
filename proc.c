@@ -180,7 +180,7 @@ int growproc(int n)
   }
   else if (n < 0)
   {
-    if ((sz = deallocuvm(curproc->pgdir, sz, sz + n)) == 0)
+    if ((sz = deallocuvm(curproc->pgdir, sz, sz + n, 1)) == 0)
       return -1;
   }
 

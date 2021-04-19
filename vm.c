@@ -245,14 +245,14 @@ int allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
     if (mem == 0)
     {
       cprintf("allocuvm out of memory\n");
-      deallocuvm(pgdir, newsz, oldsz);
+      deallocuvm(pgdir, newsz, oldsz, 0);
       return 0;
     }
     memset(mem, 0, PGSIZE);
     if (mappages(pgdir, (char *)a, PGSIZE, V2P(mem), PTE_W | PTE_U) < 0)
     {
       cprintf("allocuvm out of memory (2)\n");
-      deallocuvm(pgdir, newsz, oldsz);
+      deallocuvm(pgdir, newsz, oldsz, 0);
       kfree(mem);
       return 0;
     }
@@ -264,7 +264,7 @@ int allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
 // newsz.  oldsz and newsz need not be page-aligned, nor does newsz
 // need to be less than oldsz.  oldsz can be larger than the actual
 // process size.  Returns the new process size.
-int deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
+int deallocuvm(pde_t *pgdir, uint oldsz, uint newsz, int growproc)
 {
   pte_t *pte;
   uint a, pa;
@@ -285,6 +285,10 @@ int deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
         panic("kfree");
       char *v = P2V(pa);
       kfree(v);
+      if (growproc)
+      {
+        queue_remove(&(myproc()->queue), pte);
+      }
       *pte = 0;
     }
   }
@@ -299,7 +303,7 @@ void freevm(pde_t *pgdir)
 
   if (pgdir == 0)
     panic("freevm: no pgdir");
-  deallocuvm(pgdir, KERNBASE, 0);
+  deallocuvm(pgdir, KERNBASE, 0, 0);
   for (i = 0; i < NPDENTRIES; i++)
   {
     //you don't need to check for PTE_E here because
