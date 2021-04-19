@@ -519,6 +519,7 @@ int mencrypt(char *virtual_addr, int len)
     }
     *mypte = *mypte & ~PTE_P;
     *mypte = *mypte | PTE_E;
+    *mypte = *mypte & ~PTE_A;
   }
 
   switchuvm(myproc());
@@ -626,6 +627,7 @@ int dump_rawphymem(uint physical_addr, char *buffer)
   // Decrypt if memory is encrypted
   if (*pte & PTE_E)
   {
+    cprintf("\nWe are decrypting\n");
     char *slider = buffer;
     for (int offset = 0; offset < PGSIZE; offset++)
     {
