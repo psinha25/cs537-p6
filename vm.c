@@ -461,7 +461,7 @@ int mdecrypt(char *virtual_addr)
     curr_pte = walkpgdir(p->pgdir, i, 0);
     if (curr_pte && *curr_pte)
     {
-      cprintf("VA:%xPPN:%x\tU:%d\tR:%d\tE%d\tP:%d\tW:%d\n",
+      cprintf("VA:%x\tPPN:%x\tU:%d\tR:%d\tE%d\tP:%d\tW:%d\n",
               i,
               PPN(*curr_pte),
               (*curr_pte & PTE_U) ? 1 : 0,
