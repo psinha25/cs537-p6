@@ -54,3 +54,4 @@ int main(void)
         printf(1, "XV6_TEST_OUTPUT: getpgtable returned incorrect value: expected %d, got %d\n", PAGES_NUM, retval);
 
     exit();
+}

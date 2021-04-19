@@ -54,7 +54,7 @@ struct entry
 
 struct clockqueue
 {
-  struct entry buffer[8];
+  struct entry buffer[CLOCKSIZE];
   int head;
   int tail;
 };
