@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     // Get the page table information for newly allocated page
     // and the page should be encrypted at this point
     getpgtable(pt_entry, 1, 0);
-    ptr[0] = 0x0;
+    ptr[0] = ptr[0];
     // The page should now be decrypted and put into the clock queue
     getpgtable(pt_entry, 1, 1);
 }
