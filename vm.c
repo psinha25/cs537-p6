@@ -443,43 +443,6 @@ int mdecrypt(char *virtual_addr)
   // Insert this page into working set
   queue_append(&(p->queue), virtual_addr, pte);
 
-  // Print the queue started at the
-  cprintf("\nworking set queue:\n");
-  int curr = p->queue.head;
-  while (curr != -1)
-  {
-    pte_t *pte = p->queue.buffer[curr].pte;
-
-    cprintf("VA:%x\tPA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
-            p->queue.buffer[curr].va,
-            V2P(p->queue.buffer[curr].va),
-            PPN(*(p->queue.buffer[curr].pte)),
-            *pte & PTE_U ? 1 : 0,
-            *pte & PTE_A ? 1 : 0,
-            *pte & PTE_E ? 1 : 0,
-            *pte & PTE_P ? 1 : 0);
-    curr = p->queue.buffer[curr].next;
-  }
-
-  cprintf("\n");
-  cprintf("Print all PTEs now\n");
-  pte_t *curr_pte;
-  for (void *i = 0; i <= (void *)PGROUNDDOWN((int)p->sz); i += PGSIZE)
-  {
-    curr_pte = walkpgdir(p->pgdir, i, 0);
-    if (curr_pte && *curr_pte)
-    {
-      cprintf("VA:%x\tPA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
-              i,
-              V2P(i),
-              PPN(*curr_pte),
-              (*curr_pte & PTE_U) ? 1 : 0,
-              (*curr_pte & PTE_A) ? 1 : 0,
-              (*curr_pte & PTE_E) ? 1 : 0,
-              (*curr_pte & PTE_P) ? 1 : 0,
-              (*curr_pte & PTE_W) ? 1 : 0);
-    }
-  }
   return 0;
 }
 
@@ -499,7 +462,7 @@ int mencrypt(char *virtual_addr, int len)
     char *kvp = uva2ka(mypd, slider);
     if (!kvp)
     {
-      cprintf("mencrypt: Could not access address\n");
+      // cprintf("mencrypt: Could not access address\n");
       return -1;
     }
     slider = slider + PGSIZE;
@@ -551,30 +514,9 @@ int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
     { //this page is allocated
       if (wsetOnly)
       {
-        // int curr = me->queue.head;
-        // while (curr != -1)
-        // {
-        //   if (me->queue.buffer[curr].pte == curr_pte)
-        //   {
-        //     break;
-        //   }
-        //   curr = me->queue.buffer[curr].next;
-        // }
-        // if (i == 0)
-        // {
-        //   break;
-        // }
-        // continue;
         int curr = me->queue.head;
-        cprintf("The head of this process is: %d\n", curr);
         while (curr != -1)
         {
-          cprintf("The buffer values at %d are: prev: %d, next: %d, va: %x, pte: %x\n",
-                  curr,
-                  me->queue.buffer[curr].prev,
-                  me->queue.buffer[curr].next,
-                  me->queue.buffer[curr].va,
-                  me->queue.buffer[curr].pte);
           if (me->queue.buffer[curr].pte == curr_pte)
           {
             //this is the same for all pt_entries... right?
@@ -625,45 +567,23 @@ int dump_rawphymem(uint physical_addr, char *buffer)
   //note that copyout converts buffer to a kva and then copies
   //which means that if buffer is encrypted, it won't trigger a decryption request
   pte_t *pte = walkpgdir(myproc()->pgdir, (void *)P2V(physical_addr), 0);
-
-  cprintf("\nBefore copyout\n");
-  cprintf("VA:%x\tPA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
-          P2V(physical_addr),
-          physical_addr,
-          PPN(*pte),
-          (*pte & PTE_U) ? 1 : 0,
-          (*pte & PTE_A) ? 1 : 0,
-          (*pte & PTE_E) ? 1 : 0,
-          (*pte & PTE_P) ? 1 : 0,
-          (*pte & PTE_W) ? 1 : 0);
-
   *buffer = *buffer;
   int retval = copyout(myproc()->pgdir, (uint)buffer, (void *)P2V(physical_addr), PGSIZE);
-  cprintf("After copyout\n");
-  cprintf("VA:%x\tPA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
-          P2V(physical_addr),
-          physical_addr,
-          PPN(*pte),
-          (*pte & PTE_U) ? 1 : 0,
-          (*pte & PTE_A) ? 1 : 0,
-          (*pte & PTE_E) ? 1 : 0,
-          (*pte & PTE_P) ? 1 : 0,
-          (*pte & PTE_W) ? 1 : 0);
 
   if (retval)
     return -1;
 
-  // Decrypt if memory is encrypted
-  if (*pte & PTE_E)
-  {
-    cprintf("\nWe are decrypting\n");
-    char *slider = buffer;
-    for (int offset = 0; offset < PGSIZE; offset++)
-    {
-      *slider = ~*slider;
-      slider++;
-    }
-  }
+  // // Decrypt if memory is encrypted
+  // if (*pte & PTE_E)
+  // {
+  //   cprintf("\nWe are decrypting\n");
+  //   char *slider = buffer;
+  //   for (int offset = 0; offset < PGSIZE; offset++)
+  //   {
+  //     *slider = ~*slider;
+  //     slider++;
+  //   }
+  // }
   return 0;
 }
 
