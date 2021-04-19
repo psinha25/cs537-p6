@@ -185,6 +185,7 @@ UPROGS=\
 	_testgrow\
 	_sbrktest\
 	_minitest\
+	_queuetest\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)

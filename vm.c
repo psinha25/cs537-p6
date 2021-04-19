@@ -440,13 +440,14 @@ int mdecrypt(char *virtual_addr)
   queue_append(&(p->queue), virtual_addr, pte);
 
   // Print the queue started at the
-  cprintf("working set queue:\n");
+  cprintf("\nworking set queue:\n");
   int curr = p->queue.head;
   while (curr != -1)
   {
     cprintf("%x", p->queue.buffer[curr].va);
     curr = p->queue.buffer[curr].next;
   }
+  cprintf("\n");
   return 0;
 }
 
