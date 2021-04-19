@@ -444,10 +444,33 @@ int mdecrypt(char *virtual_addr)
   int curr = p->queue.head;
   while (curr != -1)
   {
-    cprintf("%x\t", p->queue.buffer[curr].va);
+    pte_t *pte = p->queue.buffer[curr].pte;
+
+    cprintf("VA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
+            p->queue.buffer[curr].va, PPN(*(p->queue.buffer[curr].pte)),
+            *pte & PTE_U ? 1 : 0, *pte & PTE_A ? 1 : 0,
+            *pte & PTE_E ? 1 : 0, *pte & PTE_P ? 1 : 0);
     curr = p->queue.buffer[curr].next;
   }
+
   cprintf("\n");
+  cprintf("Print all PTEs now\n");
+  pte_t *curr_pte;
+  for (void *i = 0; i <= (void *)PGROUNDDOWN((int)p->sz); i += PGSIZE)
+  {
+    curr_pte = walkpgdir(p->pgdir, i, 0);
+    if (curr_pte && *curr_pte)
+    {
+      cprintf("VA:%x\tPPN:%x\tU:%d\tR:%d\tE%d\tP:%d\tW:%d\n",
+              i,
+              PPN(*curr_pte),
+              (*curr_pte & PTE_U) ? 1 : 0,
+              (*curr_pte & PTE_A) ? 1 : 0,
+              (*curr_pte & PTE_E) ? 1 : 0,
+              (*curr_pte & PTE_P) ? 1 : 0,
+              (*curr_pte & PTE_W) ? 1 : 0);
+    }
+  }
   return 0;
 }
 

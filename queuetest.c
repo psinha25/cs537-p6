@@ -41,14 +41,6 @@ int main(void)
     printf(1, "3000, 4000, 5000, 6000, 7000, 8000, 9000, 0   \n");
     printf(1, "4000, 5000, 6000, 7000, 8000, 9000, 0   , 2000\n");
 
-    // Deallocate 6 pages; decrypt the remaining page on the heap
-    printf(1, "\nDeallocating 6 pages...\n");
-    sbrk(-1 * 6 * PGSIZE);
-    ptr[0] = ptr[1];
-
-    printf(1, "\n********************expected queue state:\n");
-    printf(1, "0   , 2000, 3000\n");
-
     printf(1, "\n");
     exit();
 }
