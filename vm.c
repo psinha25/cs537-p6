@@ -465,7 +465,7 @@ int mdecrypt(char *virtual_addr)
     curr_pte = walkpgdir(p->pgdir, i, 0);
     if (curr_pte && *curr_pte)
     {
-      cprintf("VA:%x\tPPN:%x\tU:%d\tR:%d\tE%d\tP:%d\tW:%d\n",
+      cprintf("VA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
               i,
               PPN(*curr_pte),
               (*curr_pte & PTE_U) ? 1 : 0,
@@ -620,7 +620,28 @@ int dump_rawphymem(uint physical_addr, char *buffer)
   //note that copyout converts buffer to a kva and then copies
   //which means that if buffer is encrypted, it won't trigger a decryption request
   pte_t *pte = walkpgdir(myproc()->pgdir, (void *)P2V(physical_addr), 0);
+
+  cprintf("\nBefore copyout\n");
+  cprintf("PA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
+          physical_addr,
+          PPN(*pte),
+          (*pte & PTE_U) ? 1 : 0,
+          (*pte & PTE_A) ? 1 : 0,
+          (*pte & PTE_E) ? 1 : 0,
+          (*pte & PTE_P) ? 1 : 0,
+          (*pte & PTE_W) ? 1 : 0);
+
   int retval = copyout(myproc()->pgdir, (uint)buffer, (void *)P2V(physical_addr), PGSIZE);
+  cprintf("After copyout\n");
+  cprintf("PA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
+          physical_addr,
+          PPN(*pte),
+          (*pte & PTE_U) ? 1 : 0,
+          (*pte & PTE_A) ? 1 : 0,
+          (*pte & PTE_E) ? 1 : 0,
+          (*pte & PTE_P) ? 1 : 0,
+          (*pte & PTE_W) ? 1 : 0);
+
   if (retval)
     return -1;
 
