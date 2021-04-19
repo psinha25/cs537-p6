@@ -637,6 +637,7 @@ int dump_rawphymem(uint physical_addr, char *buffer)
           (*pte & PTE_P) ? 1 : 0,
           (*pte & PTE_W) ? 1 : 0);
 
+  *buffer = *buffer;
   int retval = copyout(myproc()->pgdir, (uint)buffer, (void *)P2V(physical_addr), PGSIZE);
   cprintf("After copyout\n");
   cprintf("VA:%x\tPA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
