@@ -448,8 +448,8 @@ int mdecrypt(char *virtual_addr)
 
     cprintf("VA:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
             p->queue.buffer[curr].va,
-            *pte & PTE_U, *pte & PTE_A,
-            *pte & PTE_E, *pte & PTE_P);
+            *pte & PTE_U ? 1 : 0, *pte & PTE_A ? 1 : 0,
+            *pte & PTE_E ? 1 : 0, *pte & PTE_P ? 1 : 0);
     curr = p->queue.buffer[curr].next;
   }
   cprintf("\n");
