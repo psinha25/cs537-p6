@@ -450,10 +450,14 @@ int mdecrypt(char *virtual_addr)
   {
     pte_t *pte = p->queue.buffer[curr].pte;
 
-    cprintf("VA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
-            p->queue.buffer[curr].va, PPN(*(p->queue.buffer[curr].pte)),
-            *pte & PTE_U ? 1 : 0, *pte & PTE_A ? 1 : 0,
-            *pte & PTE_E ? 1 : 0, *pte & PTE_P ? 1 : 0);
+    cprintf("VA:%x\tPA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
+            p->queue.buffer[curr].va,
+            V2P(p->queue.buffer[curr].va),
+            PPN(*(p->queue.buffer[curr].pte)),
+            *pte & PTE_U ? 1 : 0,
+            *pte & PTE_A ? 1 : 0,
+            *pte & PTE_E ? 1 : 0,
+            *pte & PTE_P ? 1 : 0);
     curr = p->queue.buffer[curr].next;
   }
 
@@ -465,8 +469,9 @@ int mdecrypt(char *virtual_addr)
     curr_pte = walkpgdir(p->pgdir, i, 0);
     if (curr_pte && *curr_pte)
     {
-      cprintf("VA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
+      cprintf("VA:%x\tPA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
               i,
+              V2P(i),
               PPN(*curr_pte),
               (*curr_pte & PTE_U) ? 1 : 0,
               (*curr_pte & PTE_A) ? 1 : 0,
@@ -622,7 +627,8 @@ int dump_rawphymem(uint physical_addr, char *buffer)
   pte_t *pte = walkpgdir(myproc()->pgdir, (void *)P2V(physical_addr), 0);
 
   cprintf("\nBefore copyout\n");
-  cprintf("PA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
+  cprintf("VA:%x\tPA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
+          P2V(physical_addr),
           physical_addr,
           PPN(*pte),
           (*pte & PTE_U) ? 1 : 0,
@@ -633,7 +639,8 @@ int dump_rawphymem(uint physical_addr, char *buffer)
 
   int retval = copyout(myproc()->pgdir, (uint)buffer, (void *)P2V(physical_addr), PGSIZE);
   cprintf("After copyout\n");
-  cprintf("PA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
+  cprintf("VA:%x\tPA:%x\tPPN:%x\tU:%d\tR:%d\tE:%d\tP:%d\tW:%d\n",
+          P2V(physical_addr),
           physical_addr,
           PPN(*pte),
           (*pte & PTE_U) ? 1 : 0,
