@@ -582,9 +582,21 @@ int dump_rawphymem(uint physical_addr, char *buffer)
 {
   //note that copyout converts buffer to a kva and then copies
   //which means that if buffer is encrypted, it won't trigger a decryption request
+  pte_t *pte = walkpgdir(myproc()->pgdir, (void *)P2V(physical_addr), 0);
   int retval = copyout(myproc()->pgdir, (uint)buffer, (void *)P2V(physical_addr), PGSIZE);
   if (retval)
     return -1;
+
+  // Decrypt if memory is encrypted
+  if (*pte & PTE_E)
+  {
+    char *slider = buffer;
+    for (int offset = 0; offset < PGSIZE; offset++)
+    {
+      *slider = ~*slider;
+      slider++;
+    }
+  }
   return 0;
 }
 
