@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
 {
     int num_entries = 15;
     struct pt_entry *entries = malloc(sizeof(struct pt_entry) * num_entries);
-    getpgtable(entries, num_entries, 0);
-    for (int i = 0; i < num_entries; ++i)
+    int returned = getpgtable(entries, num_entries, 0);
+    for (int i = 0; i < returned; ++i)
     {
         printf(1, "%d: pdx: %x, ptx: %x, ppage: %x, present: %d, writable: %d, user: %d, encrypted: %d, ref: %d\n",
                i, entries[i].pdx,
@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
                entries[i].user, entries[i].encrypted, entries[i].ref);
     }
 
-    printf(1, "\nsbrk(PGSIZE)\n");
     sbrk(PGSIZE);
 
     // printf(1, "\nsbrk(PGSIZE / 2)\n");
@@ -43,14 +42,16 @@ int main(int argc, char *argv[])
     // printf(1, "\nsbrk((PGSIZE / 2) - 1)\n");
     // sbrk((PGSIZE / 2) - 1);
 
-    getpgtable(entries, num_entries, 0);
-    for (int i = 0; i < num_entries; ++i)
+    struct pt_entry *entries2 = malloc(sizeof(struct pt_entry) * num_entries);
+
+    int num_returned = getpgtable(entries2, num_entries, 1);
+    for (int i = 0; i < num_returned; ++i)
     {
         printf(1, "%d: pdx: %x, ptx: %x, ppage: %x, present: %d, writable: %d, user: %d, encrypted: %d, ref: %d\n",
-               i, entries[i].pdx,
-               entries[i].ptx, entries[i].ppage,
-               entries[i].present, entries[i].writable,
-               entries[i].user, entries[i].encrypted, entries[i].ref);
+               i, entries2[i].pdx,
+               entries2[i].ptx, entries2[i].ppage,
+               entries2[i].present, entries2[i].writable,
+               entries2[i].user, entries2[i].encrypted, entries2[i].ref);
     }
 
     printf(1, "\n");
