@@ -446,8 +446,8 @@ int mdecrypt(char *virtual_addr)
   {
     pte_t *pte = p->queue.buffer[curr].pte;
 
-    cprintf("VA:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
-            p->queue.buffer[curr].va,
+    cprintf("VA:%x\tPTE:%x\tU:%d\tR:%d\tE:%d\tP:%d\n",
+            p->queue.buffer[curr].va, p->queue.buffer[curr].pte,
             *pte & PTE_U ? 1 : 0, *pte & PTE_A ? 1 : 0,
             *pte & PTE_E ? 1 : 0, *pte & PTE_P ? 1 : 0);
     curr = p->queue.buffer[curr].next;
@@ -461,7 +461,8 @@ int mdecrypt(char *virtual_addr)
     curr_pte = walkpgdir(p->pgdir, i, 0);
     if (curr_pte && *curr_pte)
     {
-      cprintf("PPN:%x\tU:%d\tR:%d\tE%d\tP:%d\tW:%d\n",
+      cprintf("VA:%xPPN:%x\tU:%d\tR:%d\tE%d\tP:%d\tW:%d\n",
+              i,
               PPN(*curr_pte),
               (*curr_pte & PTE_U) ? 1 : 0,
               (*curr_pte & PTE_A) ? 1 : 0,
