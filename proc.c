@@ -216,6 +216,12 @@ int fork(void)
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
+  // Copy parent's clock queue for P6
+  np->queue.head = curproc->queue.head;
+  np->queue.tail = curproc->queue.tail;
+  for(int i = 0; i < CLOCKSIZE; ++i){
+    np->queue.buffer[i] = curproc->queue.buffer[i];
+  }
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
