@@ -496,6 +496,10 @@ int mencrypt(char *virtual_addr, int len)
 
 int getpgtable(struct pt_entry *entries, int num, int wsetOnly)
 {
+
+  if (wsetOnly != 1 && wsetOnly != 0)
+    return -1;
+
   struct proc *me = myproc();
 
   int index = 0;
